@@ -2,22 +2,79 @@ var mongo = require('mongodb');
  
 var Server = mongo.Server,
         Db = mongo.Db,
-            BSON = mongo.BSONPure;
- 
-var server = new Server('localhost', 27017, {auto_reconnect: true});
-db = new Db('visitsdb', server);
- 
-db.open(function(err, db) {
-  if(!err) {
-    console.log("Connected to 'visitdb' database");
-    db.collection('visits', {strict:true}, function(err, collection) {
-      if (err) {
-        console.log("The 'visits' collection doesn't exist. Creating it with sample data...");
-        populateDB();
-      }
+            BSON = mongo.BSONPure,
+            MongoClient = mongo.MongoClient;
+
+var mongoUri = process.env.MONGOLAB_URI ||
+                process.env.MONGOHQ_URL ||
+                  'mongodb://localhost:27017/visitsdb';
+/**
+mongo.Db.connect(mongoUri, function (err, db) {
+  db.collection('mydocs', function(er, collection) {
+    collection.insert({'mykey': 'myvalue'}, {safe: true}, function(er,rs) {
     });
-  }
+  });
 });
+*/
+
+//var server = new Server(mongoUri, {auto_reconnect: true});
+//db = new Db('visitsdb', server);
+ 
+var db = null;
+
+MongoClient.connect(mongoUri, function(err, mdb){
+
+  if(err) throw err;
+
+  db = mdb;
+  db.collection('visits', {strict:true}, function(err, collection) {
+    if (err) {
+      console.log("The 'visits' collection doesn't exist. Creating it with sample data...");
+      populateDB();
+    }
+  });
+  /**
+  db.open(function(err, db) {
+    if(!err) {
+      console.log("Connected to 'visitdb' database");
+      db.collection('visits', {strict:true}, function(err, collection) {
+        if (err) {
+          console.log("The 'visits' collection doesn't exist. Creating it with sample data...");
+          populateDB();
+        }
+        
+        
+      });
+    }
+  });
+  **/
+
+
+  //TODO: Should not exist in production
+  var populateDB = function(){
+  var visits = [
+  {
+    "name" : "p1",
+    "date" : "2014-01-28",
+    "screened": "glucose",
+    "latitude" : "12.964203",
+    "longitude" : "77.595062"
+  },
+  {
+    "name" : "p2",
+    "date" : "2014-01-28",
+    "screened": "hba1c",
+    "latitude" : "13.964203",
+    "longitude" : "77.595062"
+  }];
+
+  db.collection('visits', function(err, collection) {
+            collection.insert(visits, {safe:true}, function(err, result) {console.log(err); console.log('Error inserting visits to mongodb');});
+                });
+};
+
+});
+
 
 exports.findById = function(req, res) {
   var id = req.params.id;
@@ -87,28 +144,4 @@ exports.deleteVisit = function(req, res) {
     });
   });
 }
-
-
-//TODO: Should not exist in production
-var populateDB = function(){
-var visits = [
-  {
-    "name" : "p1",
-    "date" : "2014-01-28",
-    "screened": "glucose",
-    "latitude" : "12.964203",
-    "longitude" : "77.595062"
-  },
-  {
-    "name" : "p2",
-    "date" : "2014-01-28",
-    "screened": "hba1c",
-    "latitude" : "13.964203",
-    "longitude" : "77.595062"
-  }];
-
-  db.collection('visits', function(err, collection) {
-            collection.insert(visits, {safe:true}, function(err, result) {console.log(err); console.log('Error inserting visits to mongodb');});
-                });
-};
 
