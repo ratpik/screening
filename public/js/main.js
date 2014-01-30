@@ -9,6 +9,14 @@ function initialize() {
       mapOptions);
 
 
+  getVisits(map);
+
+
+}
+
+
+function getVisits(map){
+
   $.getJSON('/visits/', function(results){
 
       var a1cImg = {
@@ -73,8 +81,12 @@ function initialize() {
         marker.setMap(map);
       });
       });
+
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
+$('#refreshBtn').click(function(e){
+  initialize()      
+});
 
