@@ -31,8 +31,15 @@ function getVisits(map){
             origin: new google.maps.Point(0,0),
             anchor: new google.maps.Point(0, 20)
         };
+      
+      var hbImg = {
+            url: 'img/hb.png',
+            size: new google.maps.Size(20, 20),
+            origin: new google.maps.Point(0,0),
+            anchor: new google.maps.Point(0, 20)
+        };
 
-      var icons = {'hba1c' : a1cImg, 'glucose' : glucoseImg};
+      var icons = {'hba1c' : a1cImg, 'glucose' : glucoseImg, 'hb' : hbImg};
 
       $.each(results, function(index, visit){
         var latitude = visit["latitude"];
@@ -42,38 +49,35 @@ function getVisits(map){
 
         var screenedFor = visit["screened"];
 
-        var contentString = '<div id="content">'+
-        '<div id="siteNotice">'+
-        '</div>'+
-        '<h1 id="firstHeading" class="firstHeading">Uluru</h1>'+
-        '<div id="bodyContent">'+
-        '<p><b>Uluru</b>, also referred to as <b>Ayers Rock</b>, is a large ' +
-        'sandstone rock formation in the southern part of the '+
-        'Northern Territory, central Australia. It lies 335&#160;km (208&#160;mi) '+
-        'south west of the nearest large town, Alice Springs; 450&#160;km '+
-        '(280&#160;mi) by road. Kata Tjuta and Uluru are the two major '+
-        'features of the Uluru - Kata Tjuta National Park. Uluru is '+
-        'sacred to the Pitjantjatjara and Yankunytjatjara, the '+
-        'Aboriginal people of the area. It has many springs, waterholes, '+
-        'rock caves and ancient paintings. Uluru is listed as a World '+
-        'Heritage Site.</p>'+
-        '<p>Attribution: Uluru, <a href="http://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-        'http://en.wikipedia.org/w/index.php?title=Uluru</a> '+
-        '(last visited June 22, 2009).</p>'+
-        '</div>'+
-        '</div>';
+        var contentString = 'Patient id ' + Math.floor((Math.random()*100000000)+1);
 
         var infowindow = new google.maps.InfoWindow({
                 content: contentString 
             });
 
-        var marker = new google.maps.Marker({
-            position: loc,
-            animation: google.maps.Animation.DROP,
-            icon : icons[screenedFor],
-            title: screenedFor
-        });
-
+        var rand = Math.floor((Math.random()*100)+1);
+        console.log(rand)
+        //TODO: Include Market with label js
+        //http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerwithlabel/1.1.8/docs/examples.html
+        if(rand%2 == 0){
+          var marker = new google.maps.Marker({
+              position: loc,
+              animation: google.maps.Animation.DROP,
+              icon : icons[screenedFor],
+              title: screenedFor,
+              labelContent: "At risk",
+              labelAnchor: new google.maps.Point(22, 0),
+              labelClass: "labels", // the CSS class for the label
+              labelStyle: {opacity: 0.75}
+          });
+        }else{
+          var marker = new google.maps.Marker({
+              position: loc,
+              animation: google.maps.Animation.DROP,
+              icon : icons[screenedFor],
+              title: screenedFor
+          });
+        }
         google.maps.event.addListener(marker, 'click', function() {
           infowindow.open(map,marker);
         });

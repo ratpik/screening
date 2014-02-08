@@ -6,3 +6,12 @@
 #map-canvas img {
   max-width: none;
 }
+.labels {
+  color: #f00;
+  background-color: #fff;
+  font-size: 10px;
+  text-align: center;
+  width: 30px;
+  border: 2px solid #000;
+  white-space: nowrap;
+}
