@@ -1,7 +1,8 @@
 
 var express = require('express')
     , routes = require('./routes')
-    , visits = require('./routes/visits')
+    //, visits = require('./routes/visits')
+    , visits_m = require('./routes/visits_mongoose')
     , http = require('http')
     , path = require('path');
  
@@ -34,11 +35,17 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
-app.get('/visits/', visits.findAll);
+/**app.get('/visits/', visits.findAll);
 app.get('/visits/:id', visits.findById);
 app.post('/visits/', visits.addVisit);
 app.put('/visits/:id', visits.updateVisit);
 app.delete('/visits/:id', visits.deleteVisit);
+*/
+app.get('/visitsm/', visits_m.findAll);
+app.get('/visitsm/:id', visits_m.findById);
+app.post('/visitsm/', visits_m.addVisit);
+app.put('/visitsm/:id', visits_m.updateVisit);
+app.delete('/visitsm/:id', visits_m.deleteVisit);
 
 http.createServer(app).listen(app.get('port'), function(){
     console.log("Express server listening on port " + app.get('port'));
